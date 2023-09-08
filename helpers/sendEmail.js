@@ -35,28 +35,21 @@ apikey.apiKey = ELASTIC_API_KEY;
 
 const api = new ElasticEmail.EmailsApi();
 
-const sendEmail = async (data) => {
+const sendEmail = (data, callback) => {
  const email = ElasticEmail.EmailMessageData.constructFromObject({
   Recipients: [new ElasticEmail.EmailRecipient(data.to)],
   Content: {
    Body: [
     ElasticEmail.BodyPart.constructFromObject({
      ContentType: "HTML",
-     Content: "<strong>Test email</strong>",
+     Content: data.htmlContent,
     }),
    ],
-   Subject: "Test email",
+   Subject: data.subject,
    From: META_MAIL,
   },
  });
-
- try {
-  const response = await api.emailsPost(email);
-  console.log("Email sent successfully:", response);
- } catch (error) {
-  console.error("Error sending email:", error);
-  throw error;
- }
+ api.emailsPost(email, callback);
 };
 
 module.exports = sendEmail;
